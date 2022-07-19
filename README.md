@@ -166,6 +166,7 @@ Entre no sonar: http://localhost:9000/, ir em Projetos, clicar no nome do projet
 ![image](https://user-images.githubusercontent.com/31675029/179652834-a0595b00-a5fa-4f25-8e53-fe8fccdf34a4.png)
 
 Clicando no total de cobertura, neste exmplo 100, e depois na classe de teste, pode ser visualizado de forma separada a cobertura de cada teste:
+
 ![image](https://user-images.githubusercontent.com/31675029/179653022-85c369d6-9d6a-493c-b1fd-c3bd30ed234e.png)
 
 Um exemplo simples e fácil para identificar a cobertura dos seus testes.
