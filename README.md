@@ -1,23 +1,31 @@
 # sonarqube-java
 
 Exemplo simples de como implementar sonarqube local com java utilizando docker.
-Inicialmente é necessário criar um projeto maven, com java (versão mínima 11) e spring boot.
-Para facilitar o processo pode ser utilizado o site https://start.spring.io/.
 
-Após criar o projeto e abrir na sua IDE vamos começar a configurar.
+Após abrir o projeto na sua IDE vamos começar a configurar.
+
+# Rodando sonarqube pelo Docker
+Entre no site do sonar: https://docs.sonarqube.org/latest/setup/get-started-2-minutes/ e copie o seguinte trecho:
+![image](https://user-images.githubusercontent.com/31675029/179651129-9d2df4a6-3dcb-4415-b3a5-5ffaf71a7ce0.png)
+
+Aqui podemos ver que o docker será rodado na porta 9000, este endereço está configurado no pom.xml do projeto.
+
+Execute este código no seu terminal e o docker se encarregará de subir o sonar. 
+Entre no endereço http://localhost:9000/ e coloco o login e senha (admin, admin), depois faça alteração de senha.
+Neste exemplo vamos continuar com o login admin e inserir a senha 123.
 
 # Configurando jacoco e sonarqube no pom.xml do projeto
 
-Para começar vamos adicionar o endereço local que o sonar rodará, o login e a senha, que ainda serão criados, na tag properties do pom:
+Para que o sonarqube identifique o projeto é necessário adicionar o endereço local que o sonar rodará, o login e a senha, que foram criados, na tag properties do pom:
 
 <sonar.host.url>http://localhost:9000</sonar.host.url>
 <sonar.login>admin</sonar.login>
 <sonar.password>123</sonar.password>
 
-Como este exemplo é para utilização local e para aprendizado a senha ficará a mostra, mas vale lembrar que temos outros meios seguros para que 
+Como este exemplo é para utilização local e para aprendizado a senha ficará a mostra, mas vale lembrar que existem meios seguros para que 
 os dados de login não fiquem evidentes.
 
-Além destas serão necessárias outras informações como versão do jacoco, plugin tipo de relatório que será gerado, local do relatório e linguagem utilizada: 
+Além destas, são necessárias outras informações como versão do jacoco, plugin, tipo de relatório que será gerado, local do relatório e linguagem utilizada: 
 
 <jacoco.version>0.8.6</jacoco.version>
 <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -27,7 +35,7 @@ Além destas serão necessárias outras informações como versão do jacoco, pl
 
 ![image](https://user-images.githubusercontent.com/31675029/179649489-e52fcc33-fd6d-40a4-affa-596e029ad604.png)
 
-Agora, dentro da tag dependência deve ser inserido a dependência do jacoco:
+Dentro da tag dependencies está inserida a dependência do jacoco:
 
 <dependency>
   <groupId>org.jacoco</groupId>
@@ -37,7 +45,7 @@ Agora, dentro da tag dependência deve ser inserido a dependência do jacoco:
 
 ![image](https://user-images.githubusercontent.com/31675029/179649681-b5393e58-2bd4-4ae5-b27a-84151f2993fc.png)
 
-Por fim, é preciso adicionar o plugin, dentro da tag de plugins, o snarqube com a versão utilizada e as informações requiridas para o funcionamento do jacoco:
+Por fim, as informações de plugin do sonarqube e jacoco estão dentro da tag de plugins.
 
 <plugin>
   <groupId>org.sonarsource.scanner.maven</groupId>
@@ -69,10 +77,9 @@ Por fim, é preciso adicionar o plugin, dentro da tag de plugins, o snarqube com
 ![image](https://user-images.githubusercontent.com/31675029/179650046-83cf061d-c6bb-4c33-8215-025d30e350c9.png)
 
 
-# Criando métodos e classe de testes com Junit
+# Métodos e classe de testes com Junit
 
-Para realizar alguns testes vamos criar um exemplo básico para exemplificar o funcionamento.
-Criar uma classe chamada Calculator.java e inserir métodos de somar, subtrair, multiplicar e dividir:
+Para realizar alguns testes existe um exemplo básico para o funcionamento na classe Calculator.java, onde contém métodos de somar, subtrair, multiplicar e dividir:
 
 public class Calculator {
 
@@ -96,8 +103,8 @@ public class Calculator {
 
 ![image](https://user-images.githubusercontent.com/31675029/179650499-a995d576-5173-4172-9928-73d46fb25beb.png)
 
-Agora selecione Ctrl+shift+T e vamos criar uma classe de teste para cobrir os métodos feitos.
-A classe a seguir representa alguns testes simples da nossa classe Calculator:
+A classe de teste é importante para que seja possível cobrir os métodos feitos.
+Esta classe está representada com alguns testes simples dos métodos da classe Calculator:
 
 package com.sonar.sonarqube;
 
@@ -139,30 +146,18 @@ class CalculatorTest {
 
 ![image](https://user-images.githubusercontent.com/31675029/179650812-1581bfa4-97ac-4a48-b171-e9e1a0992b9b.png)
 
-Hora de rodar o sonarqube.
 
-# Rodando sonarqube pelo Docker
-Entre no site do sonar: https://docs.sonarqube.org/latest/setup/get-started-2-minutes/ e copie o seguinte trecho:
-![image](https://user-images.githubusercontent.com/31675029/179651129-9d2df4a6-3dcb-4415-b3a5-5ffaf71a7ce0.png)
-
-Aqui podemos ver que o docker será rodado na porta 9000, conforme definimos nas confirurações do pom.xml.
-
-Execute este código no seu terminal e o docker se encarregará de subir o sonar. 
-Entre no endereço http://localhost:9000/ e coloco o login e senha (admin, admin), depois faça alteração de senha.
-Neste exemplo vamo continuar com o login admin e inserir a senha 123.
-
-
-Pronto, vamos para a última parte.
-Excluir os pacotes que não fazem sentido cobrir com teste.
-Para este caso vamos remover dos testes apenas nossa classe de aplicação, sendo assim, vá no arquivo pom.xml e dentro da tag properties adicione a linha:
+Outro ponto é a exclusão de pacotes ou classes que não precisam de teste. 
+Para excluir os pacotes que não fazem sentido cobrir com teste, neste caso uma única classe, foi inserida a tag "sonar.exclusions" dentro da tag properties, 
+conforme exemplo abaixo:
 
 <sonar.exclusions> src/main/java/com/sonar/sonarqube/SonarqubeApplication.java</sonar.exclusions>
 
-Agora basta buildar seu projeto e executar o comando 
+Pronto, agora basta buildar o projeto e executar o comando 
 
 mvn clean install sonar:sonar
 
-Entre no sonar: http://localhost:9000/, ir em Projetos, clicar no nome do projeto e verificar o total de cobertura dos testes:
+Para verificar a cobertura entre no sonar: http://localhost:9000/, vá em Projetos, clique no nome do projeto e verifique o total de cobertura dos testes:
 ![image](https://user-images.githubusercontent.com/31675029/179652834-a0595b00-a5fa-4f25-8e53-fe8fccdf34a4.png)
 
 Clicando no total de cobertura, neste exmplo 100, e depois na classe de teste, pode ser visualizado de forma separada a cobertura de cada teste:
